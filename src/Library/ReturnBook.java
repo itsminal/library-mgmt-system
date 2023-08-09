@@ -7,12 +7,13 @@ import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+
 /**
  *
  * @author MINAL
  */
 public class ReturnBook extends javax.swing.JFrame {
-
+    PreparedStatement ps;
     /**
      * Creates new form ReturnBook
      */
@@ -121,8 +122,11 @@ public class ReturnBook extends javax.swing.JFrame {
         String userid=jTextField2.getText();
         try{
             Connection con=ConnectionClass.getCon();
-            Statement st=con.createStatement();
-            ResultSet rs=st.executeQuery("select * from issue where bookid ='"+bid+"' and userid='"+userid+"'");
+            String query = "SELECT * FROM issue WHERE bookid = ? AND userid = ?";
+            ps = con.prepareStatement(query);
+            ps.setString(1, bid);
+            ps.setString(2, userid);
+            ResultSet rs = ps.executeQuery();
             if(rs.next())
             {
                 jTextField3.setText(rs.getString(3));
@@ -145,21 +149,36 @@ public class ReturnBook extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String bid=jTextField1.getText();
-        String userid=jTextField1.getText();
+        String userid=jTextField2.getText();
         try
         {
-            Connection con=ConnectionClass.getCon();
-            Statement st=con.createStatement();
-            st.executeUpdate("update issue set returnBook='Yes' where userid'"+userid+"' and bookid='"+bid+"'");
-            JOptionPane.showConfirmDialog(null,"Book returned successfully");
+            Connection con = ConnectionClass.getCon();
+            String query = "UPDATE issue SET returnBook = 'Yes' WHERE bookid=? and userid=?";
+            
+            ps = con.prepareStatement(query);
+            ps.setString(1, bid);
+            ps.setString(2, userid);
+                       
+            int rowsAffected= ps.executeUpdate();
+            
+
+            if(rowsAffected>0){
+                JOptionPane.showMessageDialog(null,"Book returned successfully");
+            }
+            else{
+                JOptionPane.showMessageDialog(null,"Query failed");
+            }
+            
+//            st.executeUpdate("update issue set returnBook='Yes' where userid='"+userid+"' and bookid='"+bid+"'");
+//            JOptionPane.showConfirmDialog(null,"Book returned successfully");
             setVisible(false);
             new ReturnBook().setVisible(true);
-        } catch (SQLException ex) {
-            Logger.getLogger(ReturnBook.class.getName()).log(Level.SEVERE, null, ex);
+            con.close();
         }
-//        catch(Exception e)
+        catch(Exception e)
         {
-            JOptionPane.showConfirmDialog(null,"Connection error");
+            Logger.getLogger(ReturnBook.class.getName()).log(Level.SEVERE, "Connection error", e);
+            System.out.println(e);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

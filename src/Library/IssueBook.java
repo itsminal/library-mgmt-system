@@ -124,21 +124,23 @@ public class IssueBook extends javax.swing.JFrame {
             if(rs.next()){
                 ResultSet rs1=st.executeQuery("select * from user where userid='"+userid+"'");
                 if(rs1.next()){
-                    st.executeUpdate("insert into issue values('"+bid+"','"+userid+"','"+issueDate+"','"+dueDate+"','"+returnBook+"'");
-                    JOptionPane.showConfirmDialog(null,"Book successfully issued");
+                    st.executeUpdate("insert into issue values('"+bid+"','"+userid+"','"+issueDate+"','"+dueDate+"','"+returnBook+"')");
+                    JOptionPane.showMessageDialog(null,"Book successfully issued");
                     setVisible(false);
                     new IssueBook().setVisible(true);
                 }
                 else{
-                    JOptionPane.showConfirmDialog(null,"Incorrect User ID");
+                    JOptionPane.showMessageDialog(null,"Incorrect User ID");
                 }
             }
             else{
-                JOptionPane.showConfirmDialog(null,"Incorrect Book ID"); 
+                JOptionPane.showMessageDialog(null,"Incorrect Book ID"); 
             }
+            con.close();
         }
         catch(Exception e){
-            JOptionPane.showConfirmDialog(null,"Connection error");
+            JOptionPane.showMessageDialog(null,"Connection error");
+            System.out.println(e);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
